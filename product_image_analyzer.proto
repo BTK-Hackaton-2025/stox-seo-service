@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service ProductImageAnalyzer {
+  rpc GenerateFromImage (ImageRequest) returns (ImageResponse);
+}
+
+message ImageRequest {
+  bytes image = 1;
+  string filename = 2;
+  string content_type = 3;
+}
+
+message ImageResponse {
+  string title = 1;
+  string description = 2;
+}
