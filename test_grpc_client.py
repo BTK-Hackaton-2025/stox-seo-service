@@ -13,7 +13,7 @@ def main(image_path):
     filename = image_path.split("/")[-1]
     with open(image_path, "rb") as f:
         image_bytes = f.read()
-    channel = grpc.insecure_channel("localhost:50051")
+    channel = grpc.insecure_channel("localhost:50071")
     stub = product_image_analyzer_pb2_grpc.ProductImageAnalyzerStub(channel)
     request = product_image_analyzer_pb2.ImageRequest(
         image=image_bytes,

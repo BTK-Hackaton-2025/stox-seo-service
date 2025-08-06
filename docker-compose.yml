@@ -4,16 +4,16 @@ services:
   product-analyzer:
     build: .
     ports:
-      - "8000:8000"
+      - "50071:50071"
     environment:
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GOOGLE_API_KEY=AIzaSyCpjFAUQUNoiN0tzcBrUbnSo5EmYx2AcY0
     env_file:
       - .env
     volumes:
       - ./logs:/app/logs
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:50071/"]
       interval: 30s
       timeout: 10s
       retries: 3
