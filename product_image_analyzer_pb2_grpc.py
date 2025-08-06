@@ -39,6 +39,11 @@ class ProductImageAnalyzerStub(object):
                 request_serializer=product__image__analyzer__pb2.ImageRequest.SerializeToString,
                 response_deserializer=product__image__analyzer__pb2.ImageResponse.FromString,
                 _registered_method=True)
+        self.GenerateFromImageUrl = channel.unary_unary(
+                '/ProductImageAnalyzer/GenerateFromImageUrl',
+                request_serializer=product__image__analyzer__pb2.ImageUrlRequest.SerializeToString,
+                response_deserializer=product__image__analyzer__pb2.ImageResponse.FromString,
+                _registered_method=True)
 
 
 class ProductImageAnalyzerServicer(object):
@@ -50,12 +55,23 @@ class ProductImageAnalyzerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GenerateFromImageUrl(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ProductImageAnalyzerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GenerateFromImage': grpc.unary_unary_rpc_method_handler(
                     servicer.GenerateFromImage,
                     request_deserializer=product__image__analyzer__pb2.ImageRequest.FromString,
+                    response_serializer=product__image__analyzer__pb2.ImageResponse.SerializeToString,
+            ),
+            'GenerateFromImageUrl': grpc.unary_unary_rpc_method_handler(
+                    servicer.GenerateFromImageUrl,
+                    request_deserializer=product__image__analyzer__pb2.ImageUrlRequest.FromString,
                     response_serializer=product__image__analyzer__pb2.ImageResponse.SerializeToString,
             ),
     }
@@ -85,6 +101,33 @@ class ProductImageAnalyzer(object):
             target,
             '/ProductImageAnalyzer/GenerateFromImage',
             product__image__analyzer__pb2.ImageRequest.SerializeToString,
+            product__image__analyzer__pb2.ImageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GenerateFromImageUrl(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ProductImageAnalyzer/GenerateFromImageUrl',
+            product__image__analyzer__pb2.ImageUrlRequest.SerializeToString,
             product__image__analyzer__pb2.ImageResponse.FromString,
             options,
             channel_credentials,

@@ -6,7 +6,7 @@ services:
     ports:
       - "50071:50071"
     environment:
-      - GOOGLE_API_KEY=AIzaSyCpjFAUQUNoiN0tzcBrUbnSo5EmYx2AcY0
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     env_file:
       - .env
     volumes:

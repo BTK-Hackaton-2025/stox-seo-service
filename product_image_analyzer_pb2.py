@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cproduct_image_analyzer.proto\"E\n\x0cImageRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x14\n\x0c\x63ontent_type\x18\x03 \x01(\t\"3\n\rImageResponse\x12\r\n\x05title\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t2J\n\x14ProductImageAnalyzer\x12\x32\n\x11GenerateFromImage\x12\r.ImageRequest\x1a\x0e.ImageResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1cproduct_image_analyzer.proto\"E\n\x0cImageRequest\x12\r\n\x05image\x18\x01 \x01(\x0c\x12\x10\n\x08\x66ilename\x18\x02 \x01(\t\x12\x14\n\x0c\x63ontent_type\x18\x03 \x01(\t\"$\n\x0fImageUrlRequest\x12\x11\n\timage_url\x18\x01 \x01(\t\"3\n\rImageResponse\x12\r\n\x05title\x18\x01 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t2\x84\x01\n\x14ProductImageAnalyzer\x12\x32\n\x11GenerateFromImage\x12\r.ImageRequest\x1a\x0e.ImageResponse\x12\x38\n\x14GenerateFromImageUrl\x12\x10.ImageUrlRequest\x1a\x0e.ImageResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,8 +33,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_IMAGEREQUEST']._serialized_start=32
   _globals['_IMAGEREQUEST']._serialized_end=101
-  _globals['_IMAGERESPONSE']._serialized_start=103
-  _globals['_IMAGERESPONSE']._serialized_end=154
-  _globals['_PRODUCTIMAGEANALYZER']._serialized_start=156
-  _globals['_PRODUCTIMAGEANALYZER']._serialized_end=230
+  _globals['_IMAGEURLREQUEST']._serialized_start=103
+  _globals['_IMAGEURLREQUEST']._serialized_end=139
+  _globals['_IMAGERESPONSE']._serialized_start=141
+  _globals['_IMAGERESPONSE']._serialized_end=192
+  _globals['_PRODUCTIMAGEANALYZER']._serialized_start=195
+  _globals['_PRODUCTIMAGEANALYZER']._serialized_end=327
 # @@protoc_insertion_point(module_scope)
