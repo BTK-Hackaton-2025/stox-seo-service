@@ -4,7 +4,7 @@ services:
   product-analyzer:
     build: .
     ports:
-      - "8000:8000"
+      - "50071:50071"
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     env_file:
@@ -13,7 +13,7 @@ services:
       - ./logs:/app/logs
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "python", "health_check.py"]
       interval: 30s
       timeout: 10s
       retries: 3
