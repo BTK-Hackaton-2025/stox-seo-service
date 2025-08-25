@@ -1,19 +1,12 @@
 version: '3.8'
 
 services:
-  product-analyzer:
-    build: .
+  stox-seo-service:
+    image: stox-seo-service:latest
     ports:
       - "50071:50071"
-    environment:
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     env_file:
       - .env
-    volumes:
-      - ./logs:/app/logs
+    environment:
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "python", "health_check.py"]
-      interval: 30s
-      timeout: 10s
-      retries: 3

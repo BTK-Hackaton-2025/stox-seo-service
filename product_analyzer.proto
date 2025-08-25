@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-service ProductImageAnalyzer {
+package productanalyzer;
+
+service ProductAnalyzer {
   rpc GenerateFromImage (ImageRequest) returns (ImageResponse);
   rpc GenerateFromImageUrl (ImageUrlRequest) returns (ImageResponse);
   rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
@@ -19,6 +21,7 @@ message ImageUrlRequest {
 message ImageResponse {
   string title = 1;
   string description = 2;
+  string search_info = 3;
 }
 
 message HealthCheckRequest {}

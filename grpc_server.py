@@ -1,7 +1,7 @@
 import grpc
 from concurrent import futures
-import product_image_analyzer_pb2
-import product_image_analyzer_pb2_grpc
+import product_analyzer_pb2
+import product_analyzer_pb2_grpc
 import os
 import base64
 from google import genai
@@ -74,7 +74,7 @@ def create_prompt():
 </prompt>
 """
 
-class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageAnalyzerServicer):
+class ProductImageAnalyzerServicer(product_analyzer_pb2_grpc.ProductAnalyzerServicer):
     def GenerateFromImage(self, request, context):
         # Görsel doğrulama
         if not validate_image(request.filename, request.content_type):
@@ -143,7 +143,7 @@ class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageA
             context.abort(grpc.StatusCode.INTERNAL, f"Gemini API hatası: {str(e)}")
         # Parse the response using the improved parsing logic
         title, description = self._parse_gemini_response(response_text, context)
-        return product_image_analyzer_pb2.ImageResponse(title=title, description=description)
+        return product_analyzer_pb2.ImageResponse(title=title, description=description, search_info="")
 
     def GenerateFromImageUrl(self, request, context):
         """Generate product information from image URL"""
@@ -217,7 +217,7 @@ class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageA
         
         # Parse the response with improved error handling
         title, description = self._parse_gemini_response(response_text, context)
-        return product_image_analyzer_pb2.ImageResponse(title=title, description=description)
+        return product_analyzer_pb2.ImageResponse(title=title, description=description, search_info="")
     
     def _parse_gemini_response(self, response_text, context):
         """Parse Gemini API response and extract title and description"""
@@ -297,14 +297,14 @@ class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageA
 
     def HealthCheck(self, request, context):
         """Health check endpoint"""
-        return product_image_analyzer_pb2.HealthCheckResponse(
+        return product_analyzer_pb2.HealthCheckResponse(
             status="healthy",
-            service="ProductImageAnalyzer"
+            service="ProductAnalyzer"
         )
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    product_image_analyzer_pb2_grpc.add_ProductImageAnalyzerServicer_to_server(
+    product_analyzer_pb2_grpc.add_ProductAnalyzerServicer_to_server(
         ProductImageAnalyzerServicer(), server)
     server.add_insecure_port('[::]:50071')
     print("gRPC sunucusu başlatıldı. Port: 50071")

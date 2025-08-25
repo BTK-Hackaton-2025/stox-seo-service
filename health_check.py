@@ -3,14 +3,14 @@
 Simple health check script for gRPC server
 """
 import grpc
-import product_image_analyzer_pb2_grpc
+import product_analyzer_pb2_grpc
 import sys
 
 def check_health():
     try:
         # Try to connect to the gRPC server
         channel = grpc.insecure_channel('localhost:50071')
-        stub = product_image_analyzer_pb2_grpc.ProductImageAnalyzerStub(channel)
+        stub = product_analyzer_pb2_grpc.ProductAnalyzerStub(channel)
         
         # Set a short timeout for health check
         channel.close()
