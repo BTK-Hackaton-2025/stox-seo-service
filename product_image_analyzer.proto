@@ -3,6 +3,7 @@ syntax = "proto3";
 service ProductImageAnalyzer {
   rpc GenerateFromImage (ImageRequest) returns (ImageResponse);
   rpc GenerateFromImageUrl (ImageUrlRequest) returns (ImageResponse);
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
 }
 
 message ImageRequest {
@@ -18,4 +19,11 @@ message ImageUrlRequest {
 message ImageResponse {
   string title = 1;
   string description = 2;
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  string status = 1;
+  string service = 2;
 }

@@ -5,7 +5,7 @@ import warnings
 
 import product_image_analyzer_pb2 as product__image__analyzer__pb2
 
-GRPC_GENERATED_VERSION = '1.69.0'
+GRPC_GENERATED_VERSION = '1.74.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -44,6 +44,11 @@ class ProductImageAnalyzerStub(object):
                 request_serializer=product__image__analyzer__pb2.ImageUrlRequest.SerializeToString,
                 response_deserializer=product__image__analyzer__pb2.ImageResponse.FromString,
                 _registered_method=True)
+        self.HealthCheck = channel.unary_unary(
+                '/ProductImageAnalyzer/HealthCheck',
+                request_serializer=product__image__analyzer__pb2.HealthCheckRequest.SerializeToString,
+                response_deserializer=product__image__analyzer__pb2.HealthCheckResponse.FromString,
+                _registered_method=True)
 
 
 class ProductImageAnalyzerServicer(object):
@@ -61,6 +66,12 @@ class ProductImageAnalyzerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def HealthCheck(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ProductImageAnalyzerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -73,6 +84,11 @@ def add_ProductImageAnalyzerServicer_to_server(servicer, server):
                     servicer.GenerateFromImageUrl,
                     request_deserializer=product__image__analyzer__pb2.ImageUrlRequest.FromString,
                     response_serializer=product__image__analyzer__pb2.ImageResponse.SerializeToString,
+            ),
+            'HealthCheck': grpc.unary_unary_rpc_method_handler(
+                    servicer.HealthCheck,
+                    request_deserializer=product__image__analyzer__pb2.HealthCheckRequest.FromString,
+                    response_serializer=product__image__analyzer__pb2.HealthCheckResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -129,6 +145,33 @@ class ProductImageAnalyzer(object):
             '/ProductImageAnalyzer/GenerateFromImageUrl',
             product__image__analyzer__pb2.ImageUrlRequest.SerializeToString,
             product__image__analyzer__pb2.ImageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def HealthCheck(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/ProductImageAnalyzer/HealthCheck',
+            product__image__analyzer__pb2.HealthCheckRequest.SerializeToString,
+            product__image__analyzer__pb2.HealthCheckResponse.FromString,
             options,
             channel_credentials,
             insecure,

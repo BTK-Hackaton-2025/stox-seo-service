@@ -26,24 +26,52 @@ def validate_image(filename, content_type):
 
 def create_prompt():
     return """
-Bu görseldeki ürünü analiz et ve şu adımları takip et:
+<prompt>
+  <role>Bir e-ticaret içerik uzmanı ve pazar araştırmacısı olarak çalışıyorsun. Amacın, görseldeki ürünü analiz ederek SEO uyumlu, profesyonel ve satışa yönelik bir ürün tanıtımı hazırlamak.</role>
 
-1. Önce görseldeki ürünü tanımla
-2. Bu ürün hakkında güncel pazar bilgilerini aramak için web araması yap
-3. Benzer ürünlerin fiyat aralıklarını ve özelliklerini araştır
-4. Elde ettiğin bilgileri kullanarak aşağıdaki JSON formatında yanıt ver:
+  <workflow>
+    <step index="1">Görseli incele ve ürünü doğru şekilde tanımla (model/seri, malzeme, renk, form, ayırt edici detaylar).</step>
+    <step index="2">Zorunlu web araması yap: güncel pazar bilgilerini topla (fiyat aralıkları, rakip/benzer ürünler, teknik özellikler, trendler, talep/yorum içgörüleri).</step>
+    <step index="3">En az 3 benzer ürünü fiyat aralığı ve öne çıkan özelliklerle özetle; mümkünse bölge/para birimini belirt.</step>
+    <step index="4">Toplanan verileri kullanarak yalnızca belirtilen JSON formatında yanıt ver.</step>
+  </workflow>
+
+  <web_search required="true">
+    <must_include>Fiyat aralıkları; benzer ürünlerin marka/modeli; temel özellikler; en az 3 kaynak URL.</must_include>
+    <freshness>Güncel bilgiye öncelik ver (son 12 ay).</freshness>
+    <disclaimer>Varsayım yapma; belirsizse "bilgi yetersiz" de.</disclaimer>
+  </web_search>
+
+  <output>
+    <format>JSON</format>
+    <constraints>
+      <title max_chars="60"/>
+      <description word_count_min="150" word_count_max="300"/>
+      <language>Turkish</language>
+      <return_only_json>true</return_only_json>
+    </constraints>
+    <json_template><![CDATA[
 {
-    "title": "SEO uyumlu ürün başlığı (max 60 karakter)",
-    "description": "Detaylı ürün açıklaması (150-300 kelime)",
-    "search_info": "Web aramasından elde edilen bilgiler"
+  "title": "SEO uyumlu ürün başlığı (en fazla 60 karakter)",
+  "description": "150-300 kelime: görsel özellikler, kullanım alanları, hedef kitle ve pazardan güncel bulgularla desteklenen, profesyonel ve ikna edici açıklama. Doğal SEO anahtar kelimeleri kullan.",
+  "search_info": "Web aramasından elde edilen özet bulgular + kısa kaynak listesi (URL'lerle)."
 }
-Açıklama yazarken:
-- Ürünün görsel özelliklerini detaylandır
-- Web aramasından öğrendiğin güncel bilgileri kullan
-- Kullanım alanlarını ve hedef kitleyi belirt
-- SEO dostu anahtar kelimeler kullan
-- Profesyonel ve satışa yönelik bir dil kullan
-ÖNEMLİ: Mutlaka web araması yap ve bu bilgileri yanıtında kullan.
+    ]]></json_template>
+  </output>
+
+  <style>
+    <tone>Profesyonel, ikna edici, satış odaklı</tone>
+    <seo>Doğal anahtar kelimeler; başlıkta birincil anahtar kelime; açıklamada semantik varyasyonlar</seo>
+  </style>
+
+  <rules>
+    <rule>Görselden gözlemlenebilir özellikleri (malzeme, tasarım, renk, boyut izlenimi) açıkça belirt.</rule>
+    <rule>Web aramasından öğrendiğin güncel bilgileri açıklamaya entegre et.</rule>
+    <rule>Kullanım alanlarını ve hedef kitleyi netleştir.</rule>
+    <rule>Genellemeden kaçın; veriye dayalı yaz.</rule>
+    <rule>Çıktıyı yalnızca belirtilen JSON formatında üret; JSON dışına çıkma.</rule>
+  </rules>
+</prompt>
 """
 
 class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageAnalyzerServicer):
@@ -75,11 +103,34 @@ class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageA
                 ],
             ),
         ]
-        tools = [types.Tool(googleSearch=types.GoogleSearch())]
+        tools = [
+            types.Tool(url_context=types.UrlContext()),
+            types.Tool(googleSearch=types.GoogleSearch())
+            ]
         generate_content_config = types.GenerateContentConfig(
+            temperature=0.7,
             thinking_config=types.ThinkingConfig(thinking_budget=-1),
+            safety_settings=[
+            types.SafetySetting(
+                category="HARM_CATEGORY_HARASSMENT",
+                threshold="BLOCK_ONLY_HIGH",  # Block few
+            ),
+            types.SafetySetting(
+                category="HARM_CATEGORY_HATE_SPEECH",
+                threshold="BLOCK_ONLY_HIGH",  # Block few
+            ),
+            types.SafetySetting(
+                category="HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                threshold="BLOCK_ONLY_HIGH",  # Block few
+            ),
+            types.SafetySetting(
+                category="HARM_CATEGORY_DANGEROUS_CONTENT",
+                threshold="BLOCK_ONLY_HIGH",  # Block few
+            ),
+        ],
             tools=tools,
-        )
+        ),
+        
         response_text = ""
         try:
             for chunk in client.models.generate_content_stream(
@@ -243,6 +294,13 @@ class ProductImageAnalyzerServicer(product_image_analyzer_pb2_grpc.ProductImageA
                          f"Response preview: {debug_response}")
         
         return title, description
+
+    def HealthCheck(self, request, context):
+        """Health check endpoint"""
+        return product_image_analyzer_pb2.HealthCheckResponse(
+            status="healthy",
+            service="ProductImageAnalyzer"
+        )
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
